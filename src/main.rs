@@ -1,6 +1,7 @@
 use gtk4::gio;
 use gtk4::{
-    Application, ApplicationWindow, Button, HeaderBar, Label, Notebook, ScrolledWindow, prelude::*,
+    Application, ApplicationWindow, Box, Button, Label, Notebook, Orientation, Paned,
+    ScrolledWindow, prelude::*,
 };
 use std::env;
 use vte4::{PtyFlags, Terminal, TerminalExtManual};
@@ -43,33 +44,29 @@ fn main() {
             .default_height(600)
             .build();
 
-        let notebook = Notebook::new();
-        window.set_child(Some(&notebook));
-
-        let header = HeaderBar::builder()
-            .title_widget(&Label::new(Some("Terminal")))
-            .show_title_buttons(true)
-            .build();
+        let header_box = Box::new(Orientation::Horizontal, 5);
+        header_box.append(&Label::new(Some("Terminal")));
         let add_button = Button::builder().label("+").build();
-        header.pack_end(&add_button);
-        window.set_titlebar(Some(&header));
+        header_box.append(&add_button);
+
+        let notebook = Notebook::new();
+        let paned = Paned::new(Orientation::Horizontal);
+        paned.set_start_child(Some(&notebook));
+
+        let root_box = Box::new(Orientation::Vertical, 0);
+        root_box.append(&header_box);
+        root_box.append(&paned);
+        window.set_child(Some(&root_box));
 
         let nb_clone = notebook.clone();
         add_button.connect_clicked(move |_| {
             add_tab(&nb_clone);
         });
 
-        let app_clone = app.clone();
+        let paned_clone = paned.clone();
         notebook.connect_create_window(move |_, _| {
-            let win = ApplicationWindow::builder()
-                .application(&app_clone)
-                .title("Terminal")
-                .default_width(800)
-                .default_height(600)
-                .build();
             let nb = Notebook::new();
-            win.set_child(Some(&nb));
-            win.present();
+            paned_clone.set_end_child(Some(&nb));
             Some(nb)
         });
 
