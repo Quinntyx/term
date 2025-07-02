@@ -1,6 +1,6 @@
 # Contributor Guide
 
-This repository contains a small Rust codebase for a note taking application. The project prefers simple, consistent code. Follow these guidelines when adding code or documentation.
+This repository contains a small Rust codebase for a terminal emulator application. The project prefers simple, consistent code. Follow these guidelines when adding code or documentation.
 
 ## Coding style
 
@@ -12,12 +12,8 @@ This repository contains a small Rust codebase for a note taking application. Th
 ## Development workflow
 
 - Ensure `cargo build` and `cargo test` (when tests exist) complete without errors before opening a pull request.
+- Ensure that `cargo clippy` completes without warnings before opening a pull request.
+- Do not use old-style `clone!` macro syntax for GTK code. 
 - Commit messages should be short, present tense commands such as "Add graph view" or "Fix editor layout".
 
 These conventions help keep contributions uniform and easy to review.
-
-## Crate layout
-
-- **notes-core**: Library and CLI for loading notes, building the graph and managing files. Non-UI logic belongs here.
-- **notes-gui**: GTK application providing the graphical interface. It depends on notes-core for data handling.
-
